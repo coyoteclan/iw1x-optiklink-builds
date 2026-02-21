@@ -36,7 +36,7 @@ jobs:
       - name: Get latest commit of iw1x-server-r
         id: get_commit
         run: |
-          COMMIT=$(git ls-remote https://gitlab.com/kazam0180/iw1x-server-r.git HEAD | cut -f1 | cut -c1-7)
+          COMMIT=$(git ls-remote https://github.com/cod1raph/iw1x-server-r.git HEAD | cut -f1 | cut -c1-7)
           echo "commit=$COMMIT" >> $GITHUB_OUTPUT
 
       - name: Check if branch already exists
