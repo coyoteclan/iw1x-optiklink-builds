@@ -51,12 +51,8 @@ deps = [
 # Source files
 sources = [
   'src/gsc.cpp',
-  'src/gsc_bots.cpp',
-  'src/gsc_curl.cpp',
   'src/gsc_entity.cpp',
-  'src/gsc_exec.cpp',
   'src/gsc_player.cpp',
-  'src/gsc_sqlite.cpp',
   'src/gsc_utils.cpp',
   'src/gsc_weapons.cpp',
   'src/jump.cpp',
