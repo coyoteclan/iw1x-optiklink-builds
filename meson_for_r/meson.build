@@ -55,7 +55,6 @@ sources = [
   'src/gsc_player.cpp',
   'src/gsc_utils.cpp',
   'src/gsc_weapons.cpp',
-  'src/jump.cpp',
   'src/hook.cpp',
   'src/iw1x.cpp'
 ]
