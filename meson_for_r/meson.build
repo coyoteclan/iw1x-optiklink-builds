@@ -13,7 +13,7 @@ enable_unsafe = get_option('enable_unsafe')
 
 # Print configuration messages
 message('---------------------')
-message('iw1x-server-r (rolling)'
+message('iw1x-server-r (rolling)')
 message('Target: ' + get_option('buildtype'))
 message('Risky features: ' + enable_unsafe.to_string())
 message('---------------------')
