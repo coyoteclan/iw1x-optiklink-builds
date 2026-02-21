@@ -1,0 +1,1 @@
+option('enable_unsafe', type: 'boolean', value: false, description: 'Enable risky features (fread, fwrite...)')
