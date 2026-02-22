@@ -91,7 +91,7 @@ jobs:
     needs: check
     if: needs.check.outputs.branch_exists == 'false'
     container:
-      image: debian:buster
+      image: ubuntu:20.04
 
     env:
       COMMIT: ${{ needs.check.outputs.commit }}
@@ -105,11 +105,7 @@ jobs:
     steps:
       - name: Install Dependencies
         run: |
-          rm /etc/apt/sources.list
-          echo "deb http://archive.debian.org/debian/ buster main contrib non-free" >> /etc/apt/sources.list
-          echo "deb http://archive.debian.org/debian/ buster-updates main contrib non-free" >> /etc/apt/sources.list
-          echo "deb http://archive.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list
-          echo "deb http://archive.debian.org/debian/ buster-backports main contrib non-free" >> /etc/apt/sources.list
+          export DEBIAN_FRONTEND=noninteractive # we don't want to configure timezone
           dpkg --add-architecture i386
           apt update
           apt install -y g++-multilib python3-pip ninja-build pkg-config \
@@ -170,8 +166,9 @@ jobs:
 
       - name: Create release
         run: |
+          source /etc/os-release
           cat > notes.md <<EOF
-          Automated build of [iw1x-server-k](https://gitlab.com/kazam0180/iw1x-server-k) @ $COMMIT on Debian Buster
+          Automated build of [iw1x-server-k](https://gitlab.com/kazam0180/iw1x-server-k) @ $COMMIT on $PRETTY_NAME
 
           **Build options:**
           - Debug: ${{ inputs.debug }}
@@ -180,7 +177,11 @@ jobs:
           - cURL: ${{ inputs.curl }}
           - SSL: ${{ inputs.ssl }}
           - AIRJUMPS: ${{ inputs.airjumps }}
+
+          **Note:** For running, you need `libstdc++.so.6` from $NAME $VERSION_CODENAME. You can either download it from [here](https://raw.githubusercontent.com/coyoteclan/iw1x-optiklink-builds/refs/heads/main/libstdc++.so.6) or extract from the [package](https://archive.ubuntu.com/ubuntu/pool/main/g/gcc-10/libstdc++6_10.5.0-1ubuntu1~20.04_i386.deb) yourself.
+
           EOF
+
           gh release create "$BRANCH" iw1x.so \
             --title "iw1x-server-k $COMMIT" \
             --notes-file notes.md  \
