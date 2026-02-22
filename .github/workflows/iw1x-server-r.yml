@@ -78,6 +78,7 @@ jobs:
           apt update
           apt install -y g++-multilib libstdc++6:i386 python3-pip ninja-build pkg-config \
             git bash
+          exit 1
           pip3 install meson
 
       - name: Checkout workflow repo
