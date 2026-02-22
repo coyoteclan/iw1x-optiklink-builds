@@ -59,7 +59,7 @@ jobs:
     needs: check
     if: needs.check.outputs.branch_exists == 'false'
     container:
-      image: debian:buster
+      image: ubuntu:20.04
 
     env:
       COMMIT: ${{ needs.check.outputs.commit }}
@@ -69,14 +69,14 @@ jobs:
     steps:
       - name: Install Dependencies
         run: |
-          rm /etc/apt/sources.list
-          echo "deb http://archive.debian.org/debian/ buster main contrib non-free" >> /etc/apt/sources.list
-          echo "deb http://archive.debian.org/debian/ buster-updates main contrib non-free" >> /etc/apt/sources.list
-          echo "deb http://archive.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list
-          echo "deb http://archive.debian.org/debian/ buster-backports main contrib non-free" >> /etc/apt/sources.list
+          #rm /etc/apt/sources.list
+          #echo "deb http://archive.debian.org/debian/ buster main contrib non-free" >> /etc/apt/sources.list
+          #echo "deb http://archive.debian.org/debian/ buster-updates main contrib non-free" >> /etc/apt/sources.list
+          #echo "deb http://archive.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list
+          #echo "deb http://archive.debian.org/debian/ buster-backports main contrib non-free" >> /etc/apt/sources.list
           dpkg --add-architecture i386
           apt update
-          apt install -y g++-multilib python3-pip ninja-build pkg-config \
+          apt install -y g++-multilib libstdc++6:i386 python3-pip ninja-build pkg-config \
             git bash
           pip3 install meson
 
