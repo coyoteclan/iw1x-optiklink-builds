@@ -56,6 +56,10 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.get_os_info.outputs.name }}
+      prettyname: ${{ steps.get_os_info.outputs.prettyname }}
+      codename: ${{ steps.get_os_info.outputs.codename }}
     needs: check
     if: needs.check.outputs.branch_exists == 'false'
     container:
@@ -67,6 +71,15 @@ jobs:
       BUNSAFE: ${{ inputs.unsafe || 'true' }}
 
     steps:
+      - name: Get OS Release Info
+        id: get_os_info
+        shell: bash
+        run: |
+          source /etc/os-release
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "prettyname=$PRETTY_NAME" >> $GITHUB_OUTPUT
+          echo "codename=$VERSION_CODENAME" >> $GITHUB_OUTPUT
+
       - name: Install Dependencies
         run: |
           export DEBIAN_FRONTEND=noninteractive # we don't want to configure timezone
@@ -120,6 +133,9 @@ jobs:
     if: needs.check.outputs.branch_exists == 'false'
     env:
       COMMIT: ${{ needs.check.outputs.commit }}
+      NAME: ${{ needs.build.outputs.name }}
+      PRETTY_NAME: ${{ needs.build.outputs.prettyname }}
+      VERSION_CODENAME: ${{ needs.build.outputs.codename }}
       BRANCH: iw1x-server-r_${{ needs.check.outputs.commit }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -132,7 +148,6 @@ jobs:
       - name: Create release
         shell: bash
         run: |
-          source /etc/os-release
           cat > notes.md <<EOF
           Automated build of [iw1x-server-r](https://github.com/cod1raph/iw1x-server-r) @ $COMMIT on $PRETTY_NAME
 
