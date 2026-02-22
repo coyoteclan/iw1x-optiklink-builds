@@ -1,0 +1,31 @@
+
+stages:
+  - test
+  - build
+
+static_checks:
+  image: kazam0180/t1x-static-checks:latest
+  stage: test
+  before_script:
+    - chmod +x misc/scripts/*
+  script:
+    - misc/scripts/file_format.sh
+    - misc/scripts/clang_format.sh
+
+compile-checks:
+  image: quay.io/mechamorph/iw1x-debian-bookworm:latest
+  stage: build
+  dependencies:
+    - static_checks
+  script:
+    - meson setup build/debug --buildtype=debug -Denable_unsafe=true -Dcompile_curl=true -Dcompile_ssl=true -Dcompile_sqlite=true -Dprefix=$(realpath .)
+    - ninja -C build/debug install
+    - mkdir -p bin
+    - cp lib/i386-linux-gnu/iw1x.so bin/
+  artifacts:
+    untracked: false
+    when: on_success
+    access: all
+    expire_in: 14 days
+    paths:
+      - "bin/iw1x.so"

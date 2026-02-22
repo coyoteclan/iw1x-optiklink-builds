@@ -1,0 +1,6 @@
+CompileFlags:
+  Add:
+    - -m32
+  Remove:
+    - -fpch-preprocess
+    - -include

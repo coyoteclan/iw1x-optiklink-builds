@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+HOOK_DIR=".git/hooks"
+HOOK_FILE="$HOOK_DIR/pre-commit"
+
+if [ ! -d "$HOOK_DIR" ]; then
+    echo "Error: Not in a git repository"
+    exit 1
+fi
+
+cat > "$HOOK_FILE" << 'EOF'
+#!/usr/bin/env bash
+
+set -e
+
+RED="\e[1;31m"
+GREEN="\e[1;32m"
+RESET="\e[0m"
+
+echo "Running pre-commit format checks..."
+
+echo "→ Checking file formatting..."
+if ! ./misc/scripts/file_format.sh; then
+    echo ""
+    echo -e "${RED}File formatting issues detected!${RESET}"
+    echo "Files have been automatically fixed."
+    echo "Please stage the changes and commit again:"
+    echo "  git add -u"
+    echo "  git commit"
+    exit 1
+fi
+
+echo "→ Checking code formatting..."
+if ! ./misc/scripts/clang_format.sh; then
+    echo ""
+    echo -e "${RED}Code formatting issues detected!${RESET}"
+    echo "Files have been automatically fixed."
+    echo "Please stage the changes and commit again:"
+    echo "  git add -u"
+    echo "  git commit"
+    exit 1
+fi
+
+echo -e "${GREEN}All format checks passed!${RESET}"
+exit 0
+EOF
+
+chmod +x "$HOOK_FILE"
+echo "Pre-commit hook installed successfully!"
