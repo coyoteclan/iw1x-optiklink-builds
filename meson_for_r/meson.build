@@ -3,7 +3,7 @@ project(
   'iw1x-server',
   'cpp',
   default_options: [
-    'cpp_std=gnu++17', 'warning_level=3', 'buildtype=debug',
+    'cpp_std=gnu++20', 'warning_level=3', 'buildtype=debug',
     'libdir=lib/i386-linux-gnu', 'prefix=/usr/local'
   ]
 )
