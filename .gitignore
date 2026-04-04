@@ -1,0 +1,4 @@
+docs/build
+bin
+.cache
+misc/clang_format_18
