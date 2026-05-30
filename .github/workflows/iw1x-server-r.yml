@@ -108,7 +108,7 @@ jobs:
           mkdir -p build
           cd build
           cmake .. \
-            -DFILE_HANDLING=$BUNSAFE
+            -DFILE_HANDLING=$BUNSAFE \
             -DSQLITE=$BSQLITE
           make
 
