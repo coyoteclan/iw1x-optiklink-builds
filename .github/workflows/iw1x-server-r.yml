@@ -97,22 +97,13 @@ jobs:
         run: |
           git clone https://github.com/cod1raph/iw1x-server-r.git --single-branch --depth=1 /tmp/iw1x-server-r
 
-          #cp meson_for_r/* /tmp/iw1x-server-r/
-
           cd /tmp/iw1x-server-r
-          #source 64bit_build_env
-          #buildtype='release'
-          #if [ $DEBUG_BUILD == 'true' ]; then
-          #  buildtype='debug'
-          #fi
           mkdir -p build
           cd build
           cmake .. \
             -DFILE_HANDLING=$BUNSAFE \
             -DSQLITE=$BSQLITE
           make
-
-          rm meson.build meson_options.txt 64bit_build_env
 
       - name: Commit binary and push branch
         run: |
@@ -154,8 +145,8 @@ jobs:
           Automated build of [iw1x-server-r](https://github.com/cod1raph/iw1x-server-r) @ $COMMIT on $PRETTY_NAME
 
           **Build options:**
-          - Debug: ${{ inputs.debug }}
-          - Unsafe: ${{ inputs.unsafe }}
+          - Unsafe/File Handling: ${{ inputs.file_handling }}
+          - SQLite: ${{ inputs.sqlite }}
 
           **Note:** For running, you need \`libstdc++.so.6\` from $NAME $VERSION_CODENAME. You can either download it from [here](https://raw.githubusercontent.com/coyoteclan/iw1x-optiklink-builds/refs/heads/main/libstdc++.so.6) or extract from the [package](https://archive.ubuntu.com/ubuntu/pool/main/g/gcc-10/libstdc++6_10.5.0-1ubuntu1~20.04_i386.deb) yourself.
 
