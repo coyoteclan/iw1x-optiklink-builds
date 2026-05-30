@@ -5,22 +5,22 @@ on:
     - cron: '0 */12 * * *'
   workflow_dispatch:
     inputs:
-      debug:
-        description: 'Enable debugging information, disable optimization'
+      file_handling:
+        description: 'Enable file handling features (fread, fwrite...)'
         required: true
-        default: 'false'
+        default: 'ON'
         type: choice
         options:
-        - 'true'
-        - 'false'
-      unsafe:
-        description: 'Enable unsafe features (fread, fwrite...)'
+        - 'ON'
+        - 'OFF'
+      sqlite:
+        description: 'Enable sqlite'
         required: true
-        default: 'true'
+        default: 'ON'
         type: choice
         options:
-        - 'true'
-        - 'false'
+        - 'ON'
+        - 'OFF'
 
 permissions:
   contents: write
@@ -67,8 +67,8 @@ jobs:
 
     env:
       COMMIT: ${{ needs.check.outputs.commit }}
-      DEBUG_BUILD: ${{ inputs.debug || 'false' }}
-      BUNSAFE: ${{ inputs.unsafe || 'true' }}
+      BUNSAFE: ${{ inputs.file_handling || 'ON' }}
+      BSQLITE: ${{ inputs.sqlite || 'ON' }}
 
     steps:
       - name: Get OS Release Info
@@ -97,18 +97,20 @@ jobs:
         run: |
           git clone https://github.com/cod1raph/iw1x-server-r.git --single-branch --depth=1 /tmp/iw1x-server-r
 
-          cp meson_for_r/* /tmp/iw1x-server-r/
+          #cp meson_for_r/* /tmp/iw1x-server-r/
 
           cd /tmp/iw1x-server-r
-          source 64bit_build_env
-          buildtype='release'
-          if [ $DEBUG_BUILD == 'true' ]; then
-            buildtype='debug'
-          fi
-          meson setup build \
-            --buildtype $buildtype \
-            -Denable_unsafe=$BUNSAFE
-          ninja -C build
+          #source 64bit_build_env
+          #buildtype='release'
+          #if [ $DEBUG_BUILD == 'true' ]; then
+          #  buildtype='debug'
+          #fi
+          mkdir -p build
+          cd build
+          cmake .. \
+            -DFILE_HANDLING=$BUNSAFE
+            -DSQLITE=$BSQLITE
+          make
 
           rm meson.build meson_options.txt 64bit_build_env
 
@@ -121,7 +123,7 @@ jobs:
           git checkout --orphan iw1x-server-r_$COMMIT
           git rm -rf .
           find /tmp/iw1x-server-r -mindepth 1 -maxdepth 1 ! -name '.git' ! -name 'build' ! -name '.github' -exec cp -r {} . \;
-          cp /tmp/iw1x-server-r/build/iw1x.so ./iw1x.so
+          cp /tmp/iw1x-server-r/build/bin/iw1x.so ./iw1x.so
           git add .
           git commit -m "Build iw1x-server-r@$COMMIT"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
